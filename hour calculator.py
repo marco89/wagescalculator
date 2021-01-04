@@ -1,8 +1,6 @@
-from datetime import datetime
-import time
+import datetime
+import re
 import xlsxwriter
-
-# This part is to export the final numbers to an excel spreadsheet #
 
 # Creates the link to the linked excel file
 outWorkbook = xlsxwriter.Workbook('Wages.xlsx')
@@ -10,88 +8,113 @@ outWorkbook = xlsxwriter.Workbook('Wages.xlsx')
 # Creates a sheet within that excel file
 outSheet = outWorkbook.add_worksheet()
 
-# Creates the data fields needed i.e Days of the week and hours worked
-days = ['Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-values = ['wed_hours', 'thur_hours', 'fri_hours', 'sat_hours', 'sun_hours']
-
-# Names the columns
+# Names the columns for the excel document
 outSheet.write('A1', 'Day')
 outSheet.write('B1', 'Hours')
 
 
-# Defines all the phrases to save space
-
-def ask_start():
-    return 'What time did you start on'
-
-
-def ask_finish():
-    return 'What time did you finish on'
-
-
-def tell_work():
+def tell_work():  # Relays how many hours worked
     return 'You worked'
 
 
-# This is the code itself #
+def ask_start_time(day_name, attempts=25):  # Asks what time work was started
+    for a in range(attempts):
+        start = input(f'What time did you start on {day_name}?')
+        validation = re.match("^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$", start)
+        if validation:
+            return start
+        print('Please use a HH:MM format only.')
+    else:
+        print('25 wrong attempts and you still don\'t understand that it\'s HH:MM?!')
 
-print('Initialising wage calculator...')
 
-time.sleep(0.5)
+def ask_finish_time(day_name, attempts=25):  # Asks what time work was started
+    for a in range(attempts):
+        finish = input(f'What time did you finish on {day_name}?')
+        validation = re.match("^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$", finish)
+        if validation:
+            return finish
+        print('Please use a HH:MM format only.')
 
-wed_start = input(ask_start() + ' Wednesday?')
-wed_fin = input(ask_finish() + ' Wednesday?')
-fmt = '%H:%M'
-wed_hours = datetime.strptime(wed_fin, fmt) - datetime.strptime(wed_start, fmt)
-print(tell_work(), wed_hours, 'hours on Wednesday.')
 
-outSheet.write('A2', 'Wed')
-outSheet.write('B2', (wed_hours * 24))
+def days():  # Lists the days of the week which allows ask_start_time/ask_finish_time to work
+    work_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    start_times = {day: ask_start_time for day in work_days}
+    print(start_times)
 
-thur_start = input(ask_start() + ' Thursday?')
-thur_fin = input(ask_finish() + ' Thursday?')
-fmt = '%H:%M'
-thur_hours = datetime.strptime(thur_fin, fmt) - datetime.strptime(thur_start, fmt)
-print(tell_work(), thur_hours, 'hours on Thursday.')
 
-outSheet.write('A3', 'Thur')
-outSheet.write('B3', (thur_hours * 24))
+def time_diff(a, b):  # Calculates time difference between start and finish
+    return b - a
 
-fri_start = input(ask_start() + ' Friday?')
-fri_fin = input(ask_finish() + ' Friday?')
-fmt = '%H:%M'
-fri_hours = datetime.strptime(fri_fin, fmt) - datetime.strptime(fri_start, fmt)
-print(tell_work(), fri_hours, 'hours on Friday.')
 
-outSheet.write('A4', 'Fri')
-outSheet.write('B4', (fri_hours * 24))
+start = ask_start_time('Monday')
+mon_start = datetime.datetime.strptime(start, '%H:%M')
+finish = ask_finish_time('Monday')
+mon_fin = datetime.datetime.strptime(finish, '%H:%M')
+mon_hours = time_diff(mon_start, mon_fin)
+print(mon_hours)
+outSheet.write('A2', 'Mon')
+outSheet.write('B2', (mon_hours * 24))
 
-sat_start = input(ask_start() + ' Saturday?')
-sat_fin = input(ask_finish() + ' Saturday?')
-fmt = '%H:%M'
-sat_hours = datetime.strptime(sat_fin, fmt) - datetime.strptime(sat_start, fmt)
-print(tell_work(), sat_hours, 'hours on Saturday.')
+start = ask_start_time('Tuesday')
+tue_start = datetime.datetime.strptime(start, '%H:%M')
+finish = ask_finish_time('Tuesday')
+tue_fin = datetime.datetime.strptime(finish, '%H:%M')
+tue_hours = time_diff(tue_start, tue_fin)
+print(tue_hours)
+outSheet.write('A3', 'Tue')
+outSheet.write('B3', (tue_hours * 24))
 
-outSheet.write('A5', 'Sat')
-outSheet.write('B5', (sat_hours * 24))
+start = ask_start_time('Wednesday')
+wed_start = datetime.datetime.strptime(start, '%H:%M')
+finish = ask_finish_time('Wednesday')
+wed_fin = datetime.datetime.strptime(finish, '%H:%M')
+wed_hours = time_diff(wed_start, wed_fin)
+print(wed_hours)
+outSheet.write('A4', 'Wed')
+outSheet.write('B4', (wed_hours * 24))
 
-sun_start = input(ask_start() + ' Sunday?')
-sun_fin = input(ask_finish() + ' Sunday?')
-fmt = '%H:%M'
-sun_hours = datetime.strptime(sun_fin, fmt) - datetime.strptime(sun_start, fmt)
-print(tell_work(), sun_hours, 'hours on Sunday.')
+start = ask_start_time('Thursday')
+thu_start = datetime.datetime.strptime(start, '%H:%M')
+finish = ask_finish_time('Thursday')
+thu_fin = datetime.datetime.strptime(finish, '%H:%M')
+thu_hours = time_diff(thu_start, thu_fin)
+print(thu_hours)
+outSheet.write('A5', 'Thu')
+outSheet.write('B5', (thu_hours * 24))
 
-outSheet.write('A6', 'Sun')
-outSheet.write('B6', (sun_hours * 24))
+start = ask_start_time('Friday')
+fri_start = datetime.datetime.strptime(start, '%H:%M')
+finish = ask_finish_time('Friday')
+fri_fin = datetime.datetime.strptime(finish, '%H:%M')
+fri_hours = time_diff(fri_start, fri_fin)
+print(fri_hours)
+outSheet.write('A6', 'Fri')
+outSheet.write('B6', (fri_hours * 24))
 
-total_hours = wed_hours + thur_hours + fri_hours + sat_hours + sun_hours
+start = ask_start_time('Saturday')
+sat_start = datetime.datetime.strptime(start, '%H:%M')
+finish = ask_finish_time('Saturday')
+sat_fin = datetime.datetime.strptime(finish, '%H:%M')
+sat_hours = time_diff(sat_start, sat_fin)
+print(sat_hours)
+outSheet.write('A7', 'Sat')
+outSheet.write('B7', (sat_hours * 24))
 
-hours = total_hours.total_seconds() / 3600
+start = ask_start_time('Sunday')
+sun_start = datetime.datetime.strptime(start, '%H:%M')
+finish = ask_finish_time('Sunday')
+sun_fin = datetime.datetime.strptime(finish, '%H:%M')
+sun_hours = time_diff(sun_start, sun_fin)
+print(sun_hours)
+outSheet.write('A8', 'Sun')
+outSheet.write('B8', (sun_hours * 24))
 
-print('You have worked', hours, 'hours this week.')
+total_hours = mon_hours + tue_hours + wed_hours + thu_hours + fri_hours + sat_hours + sun_hours
 
-print('At your rate of pay that is', '£', (hours * 8.72), 'paid for this week.')
+print(total_hours)
 
-outSheet.write('B8', hours)
+outSheet.write('A11', 'Hours worked')
+outSheet.write('B11', total_hours)
 
 outWorkbook.close()
