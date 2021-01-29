@@ -3,12 +3,13 @@ import re
 import xlsxwriter
 
 # Creates the link to the linked excel file
+
 outWorkbook = xlsxwriter.Workbook('Wages.xlsx')
 
 # Creates a sheet within that excel file
 outSheet = outWorkbook.add_worksheet()
 
-# Names the columns for the excel document
+# Names the columns
 outSheet.write('A1', 'Day')
 outSheet.write('B1', 'Hours')
 
@@ -55,13 +56,29 @@ def ask_user(days):  # Condenses ask_start_time and ask_finish_time into one fun
     return day_fin - day_start
 
 
-print(ask_user('Monday'))
-print(ask_user('Tuesday'))
-print(ask_user('Wednesday'))
-print(ask_user('Thursday'))
-print(ask_user('Friday'))
-print(ask_user('Saturday'))
-print(ask_user('Sunday'))
+columns = ["A2", "A3", "A4", "A5", "A6", "A7", "A8"]
 
+
+mon = (ask_user('Monday'))
+outSheet.write('A2', 'Mon')
+outSheet.write('B2', (mon * 24))
+tue = (ask_user('Tuesday'))
+outSheet.write('A3', 'Tue')
+outSheet.write('B3', (tue * 24))
+wed = (ask_user('Wednesday'))
+outSheet.write('A4', 'Wed')
+outSheet.write('B4', (wed * 24))
+thu = (ask_user('Thursday'))
+outSheet.write('A5', 'Thu')
+outSheet.write('B5', (thu * 24))
+fri = (ask_user('Friday'))
+outSheet.write('A6', 'Fri')
+outSheet.write('B6', (fri * 24))
+sat = (ask_user('Saturday'))
+outSheet.write('A7', 'Sat')
+outSheet.write('B7', (sat * 24))
+sun = (ask_user('Sunday'))
+outSheet.write('A8', 'Sun')
+outSheet.write('B8', (sun * 24))
 
 outWorkbook.close()
