@@ -1,3 +1,4 @@
+from datetime import datetime
 import datetime
 import re
 import xlsxwriter
@@ -37,6 +38,16 @@ def ask_finish_time(day_name, attempts=25):  # Asks what time work was finished
         print('Please use a HH:MM format only.')
 
 
+def hourly_wage(attempts=25):  # Asks hourly rate of pay
+    for a in range(attempts):
+        wage = input(f'What is your hourly rate of pay?')
+        validation = re.match('^[0-9].[0-9]|[0-9]*$', wage)
+        if validation:
+            return wage
+        else:
+            print('Please use a N:NN format only.')
+
+
 def days():  # Lists the days of the week which allows ask_start_time/ask_finish_time to work
     work_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     start_times = {day: ask_start_time for day in work_days}
@@ -50,6 +61,11 @@ def ask_user(days):  # Condenses ask_start_time and ask_finish_time into one fun
     day_fin = datetime.datetime.strptime(finish, '%H:%M')
     return day_fin - day_start
 
+
+print('Please enter \'na\' on days you didn\'t work')
+print('')
+
+wage = float(hourly_wage())
 
 mon = (ask_user('Monday'))
 tue = (ask_user('Tuesday'))
@@ -76,5 +92,14 @@ for day, hours in (hours_worked):
     outSheet.write(row, col, day)
     outSheet.write(row, col + 1, hours * 24)
     row += 1
+
+week_hours = (mon + tue + wed + thu + fri + sat + sun)
+total_seconds = week_hours.total_seconds()
+hours = ((total_seconds / 60) / 60)
+
+pay = float(hours * wage)
+
+outSheet.write('A10', 'Wages')
+outSheet.write('B10', pay)
 
 outWorkbook.close()
